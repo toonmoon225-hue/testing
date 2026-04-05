@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple HTML Preview Example</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background: #0f0a1f;
+            color: white;
+            padding: 40px;
+        }
+        .preview-area {
+            background: #1a1433;
+            border: 2px solid #7c3aed;
+            border-radius: 16px;
+            padding: 24px;
+            min-height: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-center">Simple HTML File Preview Demo</h1>
+        
+        <div class="mb-8">
+            <button onclick="previewHTML()" 
+                    class="bg-violet-600 hover:bg-violet-700 px-8 py-4 rounded-xl font-medium text-lg">
+                Click to Preview HTML File (with 3-second countdown)
+            </button>
+        </div>
+
+        <div id="previewContainer" class="preview-area">
+            <p class="text-purple-300 text-center py-20">
+                Click the button above to see the HTML preview with countdown
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function previewHTML() {
+            const container = document.getElementById('previewContainer');
+            
+            // Show countdown
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-64 text-center">
+                    <p class="text-amber-400 mb-6 text-lg">This HTML will be rendered in</p>
+                    <div id="count" class="text-7xl font-bold text-white mb-8">3</div>
+                    <div class="w-48 h-2 bg-purple-900 rounded-full overflow-hidden">
+                        <div id="progress" class="h-full bg-gradient-to-r from-violet-400 to-fuchsia-500 w-0 transition-all duration-3000"></div>
+                    </div>
+                </div>
+            `;
+
+            let seconds = 3;
+            const countEl = document.getElementById('count');
+            const progressEl = document.getElementById('progress');
+
+            const timer = setInterval(() => {
+                seconds--;
+                countEl.textContent = seconds;
+                progressEl.style.width = `${(3 - seconds) * 33.33}%`;
+
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    
+                    // Render the actual HTML after countdown
+                    container.innerHTML = `
+                        <div class="bg-white text-black p-8 rounded-2xl shadow-xl">
+                            <h2 class="text-2xl font-bold mb-4 text-purple-600">Hello from the HTML file!</h2>
+                            <p class="mb-6">This content was safely rendered after a 3-second countdown.</p>
+                            
+                            <div class="bg-gray-100 p-6 rounded-xl text-sm">
+                                <strong>Why the countdown?</strong><br>
+                                This delay gives you time to review before executing potentially untrusted HTML code.
+                            </div>
+                            
+                            <button onclick="alert('Button clicked!')" 
+                                    class="mt-6 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700">
+                                Click Me
+                            </button>
+                        </div>
+                    `;
+                }
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>
