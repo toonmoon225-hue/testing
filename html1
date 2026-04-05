@@ -3,91 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple HTML Preview Example</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>VOID • LATE NIGHT LOOP</title>
     <style>
-        body {
-            font-family: system-ui, sans-serif;
-            background: #0f0a1f;
-            color: white;
-            padding: 40px;
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=VT323&display=swap');
+
+        :root {
+            --accent: #00ffea;
         }
-        .preview-area {
-            background: #1a1433;
-            border: 2px solid #7c3aed;
-            border-radius: 16px;
-            padding: 24px;
-            min-height: 300px;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: var(--accent);
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                transparent 2px,
+                rgba(0, 255, 234, 0.03) 2px,
+                rgba(0, 255, 234, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-shadow: 
+                0 0 10px #00ffea,
+                0 0 40px #00ffea,
+                0 0 80px #ff00ff;
+            animation: glitch 1.5s infinite alternate;
+            user-select: none;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-4px, 4px); }
+            40% { transform: translate(-4px, -4px); }
+            60% { transform: translate(4px, 4px); }
+            80% { transform: translate(4px, -4px); }
+            100% { transform: translate(0); }
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            letter-spacing: 8px;
+            opacity: 0.7;
+            margin-bottom: 60px;
+            animation: flicker 0.8s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .orb {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 255, 234, 0.4), transparent 70%);
+            box-shadow: 
+                0 0 120px #00ffea,
+                0 0 240px #ff00ff,
+                inset 0 0 80px rgba(255,255,255,0.2);
+            animation: pulse 8s ease-in-out infinite, rotate 60s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 0.9; }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .grid {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                linear-gradient(rgba(0, 255, 234, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 234, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridmove 25s linear infinite;
+            z-index: -2;
+        }
+
+        @keyframes gridmove {
+            0% { background-position: 0 0; }
+            100% { background-position: 200px 200px; }
+        }
+
+        .particles {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .time {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            letter-spacing: 6px;
+            background: rgba(10,10,10,0.7);
+            padding: 8px 30px;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 20px rgba(0,255,234,0.5);
+            animation: timeflicker 0.4s infinite alternate;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 24px;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(0,255,234,0.4);
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: #0a0a0a;
+            box-shadow: 0 0 30px #00ffea;
+            transform: scale(1.1);
+        }
+
+        .message {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,0,255,0.1);
+            border: 1px dashed #ff00ff;
+            padding: 10px 40px;
+            font-size: 1.3rem;
+            opacity: 0;
+            transition: all 0.6s;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
+    <div class="grid"></div>
+    <div class="orb"></div>
+    <div class="particles" id="particles"></div>
+    <div class="scanlines"></div>
 
-    <div class="max-w-2xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-center">Simple HTML File Preview Demo</h1>
+    <div class="container">
+        <div class="title" id="title">VOID</div>
+        <div class="subtitle">you shouldn't be here at 3am</div>
         
-        <div class="mb-8">
-            <button onclick="previewHTML()" 
-                    class="bg-violet-600 hover:bg-violet-700 px-8 py-4 rounded-xl font-medium text-lg">
-                Click to Preview HTML File (with 3-second countdown)
-            </button>
-        </div>
-
-        <div id="previewContainer" class="preview-area">
-            <p class="text-purple-300 text-center py-20">
-                Click the button above to see the HTML preview with countdown
-            </p>
-        </div>
+        <div class="time" id="time"></div>
     </div>
 
+    <div class="controls">
+        <button onclick="toggleSound()">🔊 SYNTHWAVE</button>
+        <button onclick="changeMode()">MODE SHIFT</button>
+        <button onclick="intensify()">MORE</button>
+    </div>
+
+    <div class="message" id="message">they're watching...</div>
+
     <script>
-        function previewHTML() {
-            const container = document.getElementById('previewContainer');
-            
-            // Show countdown
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-64 text-center">
-                    <p class="text-amber-400 mb-6 text-lg">This HTML will be rendered in</p>
-                    <div id="count" class="text-7xl font-bold text-white mb-8">3</div>
-                    <div class="w-48 h-2 bg-purple-900 rounded-full overflow-hidden">
-                        <div id="progress" class="h-full bg-gradient-to-r from-violet-400 to-fuchsia-500 w-0 transition-all duration-3000"></div>
-                    </div>
-                </div>
-            `;
-
-            let seconds = 3;
-            const countEl = document.getElementById('count');
-            const progressEl = document.getElementById('progress');
-
-            const timer = setInterval(() => {
-                seconds--;
-                countEl.textContent = seconds;
-                progressEl.style.width = `${(3 - seconds) * 33.33}%`;
-
-                if (seconds <= 0) {
-                    clearInterval(timer);
-                    
-                    // Render the actual HTML after countdown
-                    container.innerHTML = `
-                        <div class="bg-white text-black p-8 rounded-2xl shadow-xl">
-                            <h2 class="text-2xl font-bold mb-4 text-purple-600">Hello from the HTML file!</h2>
-                            <p class="mb-6">This content was safely rendered after a 3-second countdown.</p>
-                            
-                            <div class="bg-gray-100 p-6 rounded-xl text-sm">
-                                <strong>Why the countdown?</strong><br>
-                                This delay gives you time to review before executing potentially untrusted HTML code.
-                            </div>
-                            
-                            <button onclick="alert('Button clicked!')" 
-                                    class="mt-6 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700">
-                                Click Me
-                            </button>
-                        </div>
-                    `;
-                }
+        // Real-time clock
+        function updateTime() {
+            const timeEl = document.getElementById('time');
+            setInterval(() => {
+                const now = new Date();
+                let hours = now.getHours();
+                let minutes = now.getMinutes();
+                let seconds = now.getSeconds();
+                timeEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }, 1000);
         }
-    </script>
 
+        // Particle system (satisfying floating dots)
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 120; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = '#00ffea';
+                particle.style.borderRadius = '50%';
+                particle.style.opacity = Math.random() * 0.6 + 0.2;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.boxShadow = '0 0 12px #00ffea';
+                particle.style.animation = `float ${Math.random() * 20 + 15}s linear infinite`;
+                particle.style.animationDelay = `-${Math.random() * 20}s`;
+                container.appendChild(particle);
+            }
+        }
+
+        // Add floating animation
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes float {
+                0% { transform: translateY(100vh) rotate(0deg); }
+                100% { transform: translateY(-100vh) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Glitch effect on title
+        function glitchTitle() {
+            const title = document.getElementById('title');
+            setInterval(() => {
+                if (Math.random() > 0.85) {
+                    title.style.transform = `translate(${Math.random()*8-4}px, ${Math.random()*8-4}px)`;
+                    setTimeout(() => {
+                        title.style.transform = 'translate(0,0)';
+                    }, 120);
+                }
+            }, 300);
+        }
+
+        // Random message flashes
+        function randomMessages() {
+            const messages = [
+                "they're watching...",
+                "3:33 AM AGAIN",
+                "don't look behind you",
+                "the void stares back",
+                "sleep is for the weak",
+                "one more minute",
+                "you feel that?"
+            ];
+            const msgEl = document.getElementById('message');
+            
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    msgEl.textContent = messages[Math.floor(Math.random() * messages.length)];
+                    msgEl.style.opacity = '1';
+                    msgEl.style.top = (30 + Math.random() * 40) + 'px';
+                    
+                    setTimeout(() => {
+                        msgEl.style.opacity = '0';
+                    }, 1800);
+                }
+            }, 4500);
+        }
+
+        // Background music toggle (using oscillator for retro feel)
+        let audioContext;
+        let oscillator;
+        let isPlaying = false;
+
+        function toggleSound() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            if (!isPlaying) {
+                oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(42, audioContext.currentTime);
+                filter.type = 'lowpass';
+                filter.frequency.value = 800;
+                gain.gain.value = 0.08;
+                
+                oscillator.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                oscillator.start();
+                isPlaying = true;
+                
+                // Add subtle modulation for that satisfying retro vibe
+                setInterval(() => {
+                    if (isPlaying && oscillator) {
+                        oscillator.frequency.setValueAtTime(42 + Math.random() * 8, audioContext.currentTime);
+                    }
+                }, 280);
+            } else {
+                if (oscillator) oscillator.stop();
+                isPlaying = false;
+            }
+        }
+
+        // Mode shift (intensify the vibe)
+        let intensity = 1;
+        function changeMode() {
+            intensity = intensity === 1 ? 2 : 1;
+            document.documentElement.style.setProperty('--accent', intensity === 2 ? '#ff00ff' : '#00ffea');
+            
+            const orb = document.querySelector('.orb');
+            orb.style.boxShadow = intensity === 2 
+                ? '0 0 180px #ff00ff, 0 0 320px #00ffff' 
+                : '0 0 120px #00ffea, 0 0 240px #ff00ff';
+        }
+
+        function intensify() {
+            const title = document.getElementById('title');
+            title.style.fontSize = '5.8rem';
+            title.style.textShadow = '0 0 60px #ff00ff, 0 0 120px #00ffff';
+            
+            setTimeout(() => {
+                title.style.fontSize = '4.5rem';
+            }, 800);
+            
+            // Shake the screen a bit
+            document.body.style.transition = 'transform 0.1s';
+            document.body.style.transform = 'translate(4px, 4px)';
+            setTimeout(() => document.body.style.transform = 'translate(-4px, -4px)', 80);
+            setTimeout(() => document.body.style.transform = 'translate(0,0)', 160);
+        }
+
+        // Mouse follower cursor (cyber feel)
+        function createCursor() {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.width = '18px';
+            cursor.style.height = '18px';
+            cursor.style.border = '2px solid #00ffea';
+            cursor.style.borderRadius = '50%';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.zIndex = '99999';
+            cursor.style.mixBlendMode = 'difference';
+            cursor.style.transition = 'transform 0.1s';
+            document.body.appendChild(cursor);
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX - 9 + 'px';
+                cursor.style.top = e.clientY - 9 + 'px';
+            });
+        }
+
+        // Keyboard easter egg
+        let konami = '';
+        document.addEventListener('keydown', (e) => {
+            konami += e.key;
+            if (konami.length > 10) konami = konami.slice(-10);
+            
+            if (konami.includes('ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba')) {
+                document.body.style.background = 'linear-gradient(45deg, #ff00ff, #00ffff)';
+                setTimeout(() => {
+                    alert("∞ VOID UNLOCKED ∞\n\nYou weren't supposed to find this.");
+                }, 300);
+            }
+        });
+
+        // Init everything
+        window.onload = function() {
+            updateTime();
+            createParticles();
+            glitchTitle();
+            randomMessages();
+            createCursor();
+            
+            // Occasional random orb pulse
+            setInterval(() => {
+                if (Math.random() > 0.8) {
+                    intensify();
+                }
+            }, 7000);
+
+            // Welcome message
+            setTimeout(() => {
+                const msg = document.getElementById('message');
+                msg.textContent = "welcome back... it's been waiting";
+                msg.style.opacity = '1';
+                setTimeout(() => msg.style.opacity = '0', 3200);
+            }, 1800);
+
+            // Make it impossible to leave easily
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    document.title = "come back...";
+                } else {
+                    document.title = "VOID • LATE NIGHT LOOP";
+                }
+            });
+        };
+    </script>
 </body>
 </html>
